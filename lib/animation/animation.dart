@@ -26,6 +26,13 @@ class _AnimState extends State<Anim>
     ).animate(animController)
     ..addListener(() {
       setState(() {});
+    })
+    ..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        animController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        animController.forward();
+      }
     });
     animController.forward();
   }
