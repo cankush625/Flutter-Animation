@@ -8,12 +8,16 @@ class Anim extends StatefulWidget {
 }
 
 class _AnimState extends State<Anim>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController animController;
   Animation<double> animation;
 
+  AnimationController padController;
+  Animation<double> padAnimation;
+
   int i = 0;
   int j = 0;
+  double padding = 0;
   bool flag = false;
   bool flag1 = false;
 
@@ -63,6 +67,30 @@ class _AnimState extends State<Anim>
       }
     });
     animController.forward();
+
+    // Second Animation Controller
+    padController = AnimationController(
+      duration: Duration(seconds: 5),
+      vsync: this,
+    );
+
+    padAnimation = Tween<double>(
+      begin: 0.2,
+      end: 1,
+    ).animate(padController)
+    ..addListener(() {
+      setState(() {
+        padding = padAnimation.value;
+      });
+    })
+    ..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        padController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        padController.forward();
+      }
+    });
+    padController.forward();
   }
 
   @override
@@ -74,26 +102,71 @@ class _AnimState extends State<Anim>
         ),
       ),
       body: SafeArea(
-        child: Transform.rotate(
-          angle: animation.value,
-          child: Center(
-            child: Container(
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Transform.translate(
+                  offset: Offset(padding * 200, padding * 100),
+                  child: Image(
+                    image: AssetImage(
+                      'assets/Flutter.png',
+                    ),
+                    height: 100,
+                    width: 100,
+                  ),
+                ),
+                Transform.scale(
+                  scale: padding * 4,
+                  child: Text(
+                    'Flutter',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                Transform.translate(
+                  offset: Offset(padding * -200, padding * 100),
+                  child: Image(
+                    image: AssetImage(
+                      'assets/Dart.png',
+                    ),
+                    height: 100,
+                    width: 100,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
               height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: _colors[i],
-              ),
+            ),
+            Transform.rotate(
+              angle: animation.value,
               child: Center(
-                child: Text(
-                  'Welcome',
-                  style: TextStyle(
-                    fontSize: 20,
+                child: Container(
+                  margin: EdgeInsets.only(left: padding * 100),
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: _colors[i],
+                  ),
+                  child: Center(
+                    child: Transform.scale(
+                      scale: padding * 2.3,
+                      child: Text(
+                        'Welcome',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
