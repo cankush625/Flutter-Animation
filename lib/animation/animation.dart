@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -5,11 +7,35 @@ class Anim extends StatefulWidget {
   _AnimState createState() => _AnimState();
 }
 
-// Use TickerProviderStateMixin if you have multiple AnimationControllers
 class _AnimState extends State<Anim>
     with SingleTickerProviderStateMixin {
   AnimationController animController;
   Animation<double> animation;
+
+  int i = 0;
+  int j = 0;
+  bool flag = false;
+  bool flag1 = false;
+
+  void changeColors() {
+    if  (flag == false && i <= _colors.length-1) {
+      sleep(Duration(milliseconds: 100));
+      if (i == _colors.length-1) {
+        flag = true;
+      } else {
+        print(i);
+        i++;
+      }
+    } else if (flag == true && i >= 0) {
+      sleep(Duration(milliseconds: 100));
+      if (i == 0) {
+        flag = false;
+      } else {
+        print(i);
+        i--;
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -25,7 +51,9 @@ class _AnimState extends State<Anim>
       end: 2 * math.pi,
     ).animate(animController)
     ..addListener(() {
-      setState(() {});
+      setState(() {
+        changeColors();
+      });
     })
     ..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -50,10 +78,18 @@ class _AnimState extends State<Anim>
           angle: animation.value,
           child: Center(
             child: Container(
-              child: Text(
-                'Welcome',
-                style: TextStyle(
-                  fontSize: 20,
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: _colors[i],
+              ),
+              child: Center(
+                child: Text(
+                  'Welcome',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
@@ -62,6 +98,44 @@ class _AnimState extends State<Anim>
       ),
     );
   }
+
+  final _colors = [
+    Color(0xFFc95959),
+    Color(0xFFc43f3f),
+    Color(0xFFc42727),
+    Color(0xFFc91818),
+    Color(0xFFc40808),
+    Color(0xFFc47e49),
+    Color(0xFFc77334),
+    Color(0xFFc76720),
+    Color(0xFFc25b10),
+    Color(0xFFc25608),
+    Color(0xFFbdb85b),
+    Color(0xFFc4be49),
+    Color(0xFFc4bd33),
+    Color(0xFFc9c11e),
+    Color(0xFFc9c008),
+    Color(0xFF4dc45b),
+    Color(0xFF3ec94f),
+    Color(0xFF2bcc3f),
+    Color(0xFF16c42b),
+    Color(0xFF07b31c),
+    Color(0xFF4446b8),
+    Color(0xFF3032ab),
+    Color(0xFF21239c),
+    Color(0xFF12148a),
+    Color(0xFF050778),
+    Color(0xFF5bbaba),
+    Color(0xFF42b8b8),
+    Color(0xFF2bbaba),
+    Color(0xFF038ea3),
+    Color(0xFF017a8c),
+    Color(0xFF874dab),
+    Color(0xFF7b3ba3),
+    Color(0xFF6c2599),
+    Color(0xFF5b1487),
+    Color(0xFF4d0778),
+  ];
 
   @override
   void dispose() {
