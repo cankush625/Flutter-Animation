@@ -15,9 +15,13 @@ class _AnimState extends State<Anim>
   AnimationController padController;
   Animation<double> padAnimation;
 
+  AnimationController textController;
+  Animation<double> textAnimation;
+
   int i = 0;
   int j = 0;
   double padding = 0;
+  double textPadding = 0;
   bool flag = false;
   bool flag1 = false;
 
@@ -37,6 +41,26 @@ class _AnimState extends State<Anim>
       } else {
         print(i);
         i--;
+      }
+    }
+  }
+
+  void changeAppBarColor() {
+    if  (flag1 == false && j <= _appbarColor.length-1) {
+      sleep(Duration(milliseconds: 100));
+      if (j == _appbarColor.length-1) {
+        flag1 = true;
+      } else {
+        print(j);
+        j++;
+      }
+    } else if (flag1 == true && j >= 0) {
+      sleep(Duration(milliseconds: 100));
+      if (j == 0) {
+        flag1 = false;
+      } else {
+        print(j);
+        j--;
       }
     }
   }
@@ -75,7 +99,7 @@ class _AnimState extends State<Anim>
     );
 
     padAnimation = Tween<double>(
-      begin: 0.2,
+      begin: 0.28,
       end: 1,
     ).animate(padController)
     ..addListener(() {
@@ -91,15 +115,41 @@ class _AnimState extends State<Anim>
       }
     });
     padController.forward();
+
+    // Third Animation Controller
+    textController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    textAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(textController)
+      ..addListener(() {
+        setState(() {
+          textPadding = textAnimation.value;
+        });
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          textController.repeat();
+        } else if (status == AnimationStatus.dismissed) {
+          textController.forward();
+        }
+      });
+    textController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
           'Animation',
         ),
+        backgroundColor: Colors.grey[900],
       ),
       body: SafeArea(
         child: Column(
@@ -108,7 +158,7 @@ class _AnimState extends State<Anim>
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Transform.translate(
-                  offset: Offset(padding * 200, padding * 100),
+                  offset: Offset(padding * 230, padding * 100),
                   child: Image(
                     image: AssetImage(
                       'assets/Flutter.png',
@@ -123,11 +173,12 @@ class _AnimState extends State<Anim>
                     'Flutter',
                     style: TextStyle(
                       fontSize: 20,
+                      color: Colors.white,
                     ),
                   ),
                 ),
                 Transform.translate(
-                  offset: Offset(padding * -200, padding * 100),
+                  offset: Offset(padding * -230, padding * 100),
                   child: Image(
                     image: AssetImage(
                       'assets/Dart.png',
@@ -145,7 +196,7 @@ class _AnimState extends State<Anim>
               angle: animation.value,
               child: Center(
                 child: Container(
-                  margin: EdgeInsets.only(left: padding * 100),
+//                  margin: EdgeInsets.only(left: padding * 100),
                   height: 200,
                   width: 200,
                   decoration: BoxDecoration(
@@ -164,6 +215,29 @@ class _AnimState extends State<Anim>
                     ),
                   ),
                 ),
+              ),
+            ),
+            SizedBox(
+              height: 100,
+            ),
+            Container(
+              width: 320,
+              child: MaterialButton(
+                onPressed: () { print("button Pressed!"); },
+                child: Padding(
+                  padding: EdgeInsets.only(left: textPadding * 40),
+                  child: Text(
+                    'Continue To The App >>>',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                color: Colors.green,
               ),
             ),
           ],
@@ -208,6 +282,14 @@ class _AnimState extends State<Anim>
     Color(0xFF6c2599),
     Color(0xFF5b1487),
     Color(0xFF4d0778),
+  ];
+
+  final _appbarColor = [
+    Color(0xFF424242),
+    Color(0xFF363636),
+    Color(0xFF292929),
+    Color(0xFF212121),
+    Color(0xFF0d0d0d),
   ];
 
   @override
